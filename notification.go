@@ -1,7 +1,6 @@
 package apns2
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -150,13 +149,4 @@ type Notification struct {
 }
 
 // MarshalJSON converts the notification payload to JSON.
-func (n *Notification) MarshalJSON() ([]byte, error) {
-	switch payload := n.Payload.(type) {
-	case string:
-		return []byte(payload), nil
-	case []byte:
-		return payload, nil
-	default:
-		return json.Marshal(payload)
-	}
-}
+func (n *Notification) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }

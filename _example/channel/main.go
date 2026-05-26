@@ -57,11 +57,6 @@ func main() {
 }
 
 func worker(client *apns2.Client, notifications <-chan *apns2.Notification, responses chan<- *apns2.Response) {
-	for n := range notifications {
-		res, err := client.Push(n)
-		if err != nil {
-			log.Fatal("Push Error:", err)
-		}
-		responses <- res
-	}
+	_ = "STUB: not implemented"
+	return
 }

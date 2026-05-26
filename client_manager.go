@@ -46,117 +46,28 @@ type ClientManager struct {
 //
 // By default, MaxSize is 64, MaxAge is 10 minutes, and Factory always returns
 // a Client with default options.
-func NewClientManager() *ClientManager {
-	manager := &ClientManager{
-		MaxSize: 64,
-		MaxAge:  10 * time.Minute,
-		Factory: NewClient,
-	}
-
-	manager.initInternals()
-
-	return manager
-}
+func NewClientManager() *ClientManager { _ = "STUB: not implemented"; return nil }
 
 // Add adds a Client to the manager. You can use this to individually configure
 // Clients in the manager.
-func (m *ClientManager) Add(client *Client) {
-	m.initInternals()
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	key := cacheKey(client.Certificate)
-	now := time.Now()
-	if ele, hit := m.cache[key]; hit {
-		item := ele.Value.(*managerItem)
-		item.client = client
-		item.lastUsed = now
-		m.ll.MoveToFront(ele)
-		return
-	}
-	ele := m.ll.PushFront(&managerItem{key, client, now})
-	m.cache[key] = ele
-	if m.MaxSize != 0 && m.ll.Len() > m.MaxSize {
-		m.mu.Unlock()
-		m.removeOldest()
-		m.mu.Lock()
-	}
-}
+func (m *ClientManager) Add(client *Client) { _ = "STUB: not implemented"; return }
 
 // Get gets a Client from the manager. If a Client is not found in the manager
 // or if a Client has remained in the manager longer than MaxAge, Get will call
 // the ClientManager's Factory function, store the result in the manager if
 // non-nil, and return it.
 func (m *ClientManager) Get(certificate tls.Certificate) *Client {
-	m.initInternals()
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	key := cacheKey(certificate)
-	now := time.Now()
-	if ele, hit := m.cache[key]; hit {
-		item := ele.Value.(*managerItem)
-		if m.MaxAge != 0 && item.lastUsed.Before(now.Add(-m.MaxAge)) {
-			c := m.Factory(certificate)
-			if c == nil {
-				return nil
-			}
-			item.client = c
-		}
-		item.lastUsed = now
-		m.ll.MoveToFront(ele)
-		return item.client
-	}
-
-	c := m.Factory(certificate)
-	if c == nil {
-		return nil
-	}
-	m.mu.Unlock()
-	m.Add(c)
-	m.mu.Lock()
-	return c
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Len returns the current size of the ClientManager.
-func (m *ClientManager) Len() int {
-	if m.cache == nil {
-		return 0
-	}
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	return m.ll.Len()
-}
+func (m *ClientManager) Len() int { _ = "STUB: not implemented"; return 0 }
 
-func (m *ClientManager) initInternals() {
-	m.once.Do(func() {
-		m.cache = map[[sha1.Size]byte]*list.Element{}
-		m.ll = list.New()
-	})
-}
+func (m *ClientManager) initInternals() { _ = "STUB: not implemented"; return }
 
-func (m *ClientManager) removeOldest() {
-	m.mu.Lock()
-	ele := m.ll.Back()
-	m.mu.Unlock()
-	if ele != nil {
-		m.removeElement(ele)
-	}
-}
+func (m *ClientManager) removeOldest() { _ = "STUB: not implemented"; return }
 
-func (m *ClientManager) removeElement(e *list.Element) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.ll.Remove(e)
-	delete(m.cache, e.Value.(*managerItem).key)
-}
+func (m *ClientManager) removeElement(e *list.Element) { _ = "STUB: not implemented"; return }
 
-func cacheKey(certificate tls.Certificate) [sha1.Size]byte {
-	var data []byte
-
-	for _, cert := range certificate.Certificate {
-		data = append(data, cert...)
-	}
-
-	return sha1.Sum(data)
-}
+func cacheKey(certificate tls.Certificate) [sha1.Size]byte { _ = "STUB: not implemented"; return nil }

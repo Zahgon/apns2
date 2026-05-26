@@ -2,7 +2,6 @@ package apns2
 
 import (
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -144,9 +143,7 @@ type Response struct {
 
 // Sent returns whether or not the notification was successfully sent.
 // This is the same as checking if the StatusCode == 200.
-func (c *Response) Sent() bool {
-	return c.StatusCode == StatusSent
-}
+func (c *Response) Sent() bool { _ = "STUB: not implemented"; return false }
 
 // Time represents a device uninstall time
 type Time struct {
@@ -154,11 +151,4 @@ type Time struct {
 }
 
 // UnmarshalJSON converts an epoch date into a Time struct.
-func (t *Time) UnmarshalJSON(b []byte) error {
-	ts, err := strconv.ParseInt(string(b), 10, 64)
-	if err != nil {
-		return err
-	}
-	t.Time = time.Unix(ts/1000, 0)
-	return nil
-}
+func (t *Time) UnmarshalJSON(b []byte) error { _ = "STUB: not implemented"; return nil }

@@ -5,13 +5,8 @@ package certificate
 import (
 	"crypto"
 	"crypto/tls"
-	"crypto/x509"
 	"encoding/pem"
 	"errors"
-	"os"
-	"strings"
-
-	"golang.org/x/crypto/pkcs12"
 )
 
 // Possible errors when parsing a certificate.
@@ -28,11 +23,8 @@ var (
 // Use "" as the password argument if the PKCS#12 certificate is not password
 // protected.
 func FromP12File(filename string, password string) (tls.Certificate, error) {
-	p12bytes, err := os.ReadFile(filename)
-	if err != nil {
-		return tls.Certificate{}, err
-	}
-	return FromP12Bytes(p12bytes, password)
+	_ = "STUB: not implemented"
+	return *new(tls.Certificate), nil
 }
 
 // FromP12Bytes loads a PKCS#12 certificate from an in memory byte array and
@@ -41,15 +33,8 @@ func FromP12File(filename string, password string) (tls.Certificate, error) {
 // Use "" as the password argument if the PKCS#12 certificate is not password
 // protected.
 func FromP12Bytes(bytes []byte, password string) (tls.Certificate, error) {
-	key, cert, err := pkcs12.Decode(bytes, password)
-	if err != nil {
-		return tls.Certificate{}, err
-	}
-	return tls.Certificate{
-		Certificate: [][]byte{cert.Raw},
-		PrivateKey:  key,
-		Leaf:        cert,
-	}, nil
+	_ = "STUB: not implemented"
+	return *new(tls.Certificate), nil
 }
 
 // FromPemFile loads a PEM certificate from a local file and returns a
@@ -60,11 +45,8 @@ func FromP12Bytes(bytes []byte, password string) (tls.Certificate, error) {
 //
 // The password argument is kept for backwards compatibility but is no longer used.
 func FromPemFile(filename string, password string) (tls.Certificate, error) {
-	bytes, err := os.ReadFile(filename)
-	if err != nil {
-		return tls.Certificate{}, err
-	}
-	return FromPemBytes(bytes, password)
+	_ = "STUB: not implemented"
+	return *new(tls.Certificate), nil
 }
 
 // FromPemBytes loads a PEM certificate from an in memory byte array and
@@ -76,49 +58,16 @@ func FromPemFile(filename string, password string) (tls.Certificate, error) {
 // Use "" as the password argument if the PEM certificate is not password
 // protected.
 func FromPemBytes(bytes []byte, password string) (tls.Certificate, error) {
-	var cert tls.Certificate
-	var block *pem.Block
-	for {
-		block, bytes = pem.Decode(bytes)
-		if block == nil {
-			break
-		}
-		if block.Type == "CERTIFICATE" {
-			cert.Certificate = append(cert.Certificate, block.Bytes)
-		}
-		if strings.HasSuffix(block.Type, "PRIVATE KEY") {
-			key, err := unencryptPrivateKey(block, password)
-			if err != nil {
-				return tls.Certificate{}, err
-			}
-			cert.PrivateKey = key
-		}
-	}
-	if len(cert.Certificate) == 0 {
-		return tls.Certificate{}, ErrNoCertificate
-	}
-	if cert.PrivateKey == nil {
-		return tls.Certificate{}, ErrNoPrivateKey
-	}
-	if c, e := x509.ParseCertificate(cert.Certificate[0]); e == nil {
-		cert.Leaf = c
-	}
-	return cert, nil
+	_ = "STUB: not implemented"
+	return *new(tls.Certificate), nil
 }
 
 func unencryptPrivateKey(block *pem.Block, password string) (crypto.PrivateKey, error) {
-	return parsePrivateKey(block.Bytes)
+	_ = "STUB: not implemented"
+	return *new(crypto.PrivateKey), nil
 }
 
 func parsePrivateKey(bytes []byte) (crypto.PrivateKey, error) {
-	var key crypto.PrivateKey
-	key, err := x509.ParsePKCS1PrivateKey(bytes)
-	if err == nil {
-		return key, nil
-	}
-	key, err = x509.ParsePKCS8PrivateKey(bytes)
-	if err == nil {
-		return key, nil
-	}
-	return nil, ErrFailedToParsePrivateKey
+	_ = "STUB: not implemented"
+	return *new(crypto.PrivateKey), nil
 }

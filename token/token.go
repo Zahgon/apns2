@@ -2,14 +2,8 @@ package token
 
 import (
 	"crypto/ecdsa"
-	"crypto/x509"
-	"encoding/pem"
 	"errors"
-	"os"
 	"sync"
-	"time"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 const (
@@ -40,68 +34,23 @@ type Token struct {
 // AuthKeyFromFile loads a .p8 certificate from a local file and returns a
 // *ecdsa.PrivateKey.
 func AuthKeyFromFile(filename string) (*ecdsa.PrivateKey, error) {
-	bytes, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	return AuthKeyFromBytes(bytes)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // AuthKeyFromBytes loads a .p8 certificate from an in memory byte array and
 // returns an *ecdsa.PrivateKey.
 func AuthKeyFromBytes(bytes []byte) (*ecdsa.PrivateKey, error) {
-	block, _ := pem.Decode(bytes)
-	if block == nil {
-		return nil, ErrAuthKeyNotPem
-	}
-	key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
-	if err != nil {
-		return nil, err
-	}
-	if pk, ok := key.(*ecdsa.PrivateKey); ok {
-		return pk, nil
-	}
-	return nil, ErrAuthKeyNotECDSA
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GenerateIfExpired checks to see if the token is about to expire and
 // generates a new token.
-func (t *Token) GenerateIfExpired() (bearer string) {
-	t.Lock()
-	defer t.Unlock()
-	if t.Expired() {
-		t.Generate()
-	}
-	return t.Bearer
-}
+func (t *Token) GenerateIfExpired() (bearer string) { _ = "STUB: not implemented"; return "" }
 
 // Expired checks to see if the token has expired.
-func (t *Token) Expired() bool {
-	return time.Now().Unix() >= (t.IssuedAt + TokenTimeout)
-}
+func (t *Token) Expired() bool { _ = "STUB: not implemented"; return false }
 
 // Generate creates a new token.
-func (t *Token) Generate() (bool, error) {
-	if t.AuthKey == nil {
-		return false, ErrAuthKeyNil
-	}
-	issuedAt := time.Now().Unix()
-	jwtToken := &jwt.Token{
-		Header: map[string]interface{}{
-			"alg": "ES256",
-			"kid": t.KeyID,
-		},
-		Claims: jwt.MapClaims{
-			"iss": t.TeamID,
-			"iat": issuedAt,
-		},
-		Method: jwt.SigningMethodES256,
-	}
-	bearer, err := jwtToken.SignedString(t.AuthKey)
-	if err != nil {
-		return false, err
-	}
-	t.IssuedAt = issuedAt
-	t.Bearer = bearer
-	return true, nil
-}
+func (t *Token) Generate() (bool, error) { _ = "STUB: not implemented"; return false, nil }

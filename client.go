@@ -4,18 +4,13 @@
 package apns2
 
 import (
-	"bytes"
 	"context"
 	"crypto/tls"
-	"encoding/json"
-	"io"
 	"net"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/sideshow/apns2/token"
-	"golang.org/x/net/http2"
 )
 
 // Apple HTTP/2 Development & Production urls
@@ -88,24 +83,7 @@ type connectionCloser interface {
 //
 // If your use case involves multiple long-lived connections, consider using
 // the ClientManager, which manages clients for you.
-func NewClient(certificate tls.Certificate) *Client {
-	tlsConfig := &tls.Config{
-		Certificates: []tls.Certificate{certificate},
-	}
-	transport := &http2.Transport{
-		TLSClientConfig: tlsConfig,
-		DialTLS:         DialTLS,
-		ReadIdleTimeout: ReadIdleTimeout,
-	}
-	return &Client{
-		HTTPClient: &http.Client{
-			Transport: transport,
-			Timeout:   HTTPClientTimeout,
-		},
-		Certificate: certificate,
-		Host:        DefaultHost,
-	}
-}
+func NewClient(certificate tls.Certificate) *Client { _ = "STUB: not implemented"; return nil }
 
 // NewTokenClient returns a new Client with an underlying http.Client configured
 // with the correct APNs HTTP/2 transport settings. It does not connect to the APNs
@@ -115,32 +93,13 @@ func NewClient(certificate tls.Certificate) *Client {
 // so that you can keep your connections with APNs open across multiple
 // notifications; don’t repeatedly open and close connections. APNs treats rapid
 // connection and disconnection as a denial-of-service attack.
-func NewTokenClient(token *token.Token) *Client {
-	transport := &http2.Transport{
-		DialTLS:         DialTLS,
-		ReadIdleTimeout: ReadIdleTimeout,
-	}
-	return &Client{
-		Token: token,
-		HTTPClient: &http.Client{
-			Transport: transport,
-			Timeout:   HTTPClientTimeout,
-		},
-		Host: DefaultHost,
-	}
-}
+func NewTokenClient(token *token.Token) *Client { _ = "STUB: not implemented"; return nil }
 
 // Development sets the Client to use the APNs development push endpoint.
-func (c *Client) Development() *Client {
-	c.Host = HostDevelopment
-	return c
-}
+func (c *Client) Development() *Client { _ = "STUB: not implemented"; return nil }
 
 // Production sets the Client to use the APNs production push endpoint.
-func (c *Client) Production() *Client {
-	c.Host = HostProduction
-	return c
-}
+func (c *Client) Production() *Client { _ = "STUB: not implemented"; return nil }
 
 // Push sends a Notification to the APNs gateway. If the underlying http.Client
 // is not currently connected, this method will attempt to reconnect
@@ -150,7 +109,8 @@ func (c *Client) Production() *Client {
 //
 // Use PushWithContext if you need better cancellation and timeout control.
 func (c *Client) Push(n *Notification) (*Response, error) {
-	return c.PushWithContext(context.Background(), n)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // PushWithContext sends a Notification to the APNs gateway. Context carries a
@@ -163,73 +123,15 @@ func (c *Client) Push(n *Notification) (*Response, error) {
 // return a Response indicating whether the notification was accepted or
 // rejected by the APNs gateway, or an error if something goes wrong.
 func (c *Client) PushWithContext(ctx Context, n *Notification) (*Response, error) {
-	payload, err := json.Marshal(n)
-	if err != nil {
-		return nil, err
-	}
-
-	url := c.Host + "/3/device/" + n.DeviceToken
-	request, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payload))
-	if err != nil {
-		return nil, err
-	}
-
-	if c.Token != nil {
-		c.setTokenHeader(request)
-	}
-
-	setHeaders(request, n)
-
-	response, err := c.HTTPClient.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-
-	r := &Response{}
-	r.StatusCode = response.StatusCode
-	r.ApnsID = response.Header.Get("apns-id")
-	r.ApnsUniqueID = response.Header.Get("apns-unique-id")
-
-	decoder := json.NewDecoder(response.Body)
-	if err := decoder.Decode(r); err != nil && err != io.EOF {
-		return &Response{}, err
-	}
-	return r, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // CloseIdleConnections closes any underlying connections which were previously
 // connected from previous requests but are now sitting idle. It will not
 // interrupt any connections currently in use.
-func (c *Client) CloseIdleConnections() {
-	c.HTTPClient.Transport.(connectionCloser).CloseIdleConnections()
-}
+func (c *Client) CloseIdleConnections() { _ = "STUB: not implemented"; return }
 
-func (c *Client) setTokenHeader(r *http.Request) {
-	bearer := c.Token.GenerateIfExpired()
-	r.Header.Set("authorization", "bearer "+bearer)
-}
+func (c *Client) setTokenHeader(r *http.Request) { _ = "STUB: not implemented"; return }
 
-func setHeaders(r *http.Request, n *Notification) {
-	r.Header.Set("Content-Type", "application/json; charset=utf-8")
-	if n.Topic != "" {
-		r.Header.Set("apns-topic", n.Topic)
-	}
-	if n.ApnsID != "" {
-		r.Header.Set("apns-id", n.ApnsID)
-	}
-	if n.CollapseID != "" {
-		r.Header.Set("apns-collapse-id", n.CollapseID)
-	}
-	if n.Priority > 0 {
-		r.Header.Set("apns-priority", strconv.Itoa(n.Priority))
-	}
-	if n.Expiration.After(time.Unix(0, 0)) {
-		r.Header.Set("apns-expiration", strconv.FormatInt(n.Expiration.Unix(), 10))
-	}
-	if n.PushType != "" {
-		r.Header.Set("apns-push-type", string(n.PushType))
-	} else {
-		r.Header.Set("apns-push-type", string(PushTypeAlert))
-	}
-}
+func setHeaders(r *http.Request, n *Notification) { _ = "STUB: not implemented"; return }
